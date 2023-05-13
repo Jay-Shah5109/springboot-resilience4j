@@ -1,9 +1,8 @@
 package com.javatechie.us;
 
 import com.javatechie.us.dto.OrderDTO;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,6 +30,8 @@ public class UserServiceApplication {
     private RestTemplate restTemplate;
 
     public static final String USER_SERVICE="userService";
+    private static final String ELECTRONICS = "electronics";
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(UserServiceApplication.class);
 
     private static final String BASEURL = "http://localhost:9191/orders";
 
@@ -42,16 +43,16 @@ public class UserServiceApplication {
     @Retry(name = USER_SERVICE,fallbackMethod = "getAllAvailableProducts")
     public List<OrderDTO> displayOrders(@RequestParam("category") String category) {
         String url = category == null ? BASEURL : BASEURL + "/" + category;
-        System.out.println("retry method called "+attempt++ +" times "+" at "+new Date());
+        log.info("retry method called {} times at {}", attempt, new Date());
         return restTemplate.getForObject(url, ArrayList.class);
     }
 
 
     public List<OrderDTO> getAllAvailableProducts(Exception e){
         return Stream.of(
-                new OrderDTO(119, "LED TV", "electronics", "white", 45000),
-                new OrderDTO(345, "Headset", "electronics", "black", 7000),
-                new OrderDTO(475, "Sound bar", "electronics", "black", 13000),
+                new OrderDTO(119, "LED TV", ELECTRONICS, "white", 45000),
+                new OrderDTO(345, "Headset", ELECTRONICS, "black", 7000),
+                new OrderDTO(475, "Sound bar", ELECTRONICS, "black", 13000),
                 new OrderDTO(574, "Puma Shoes", "foot wear", "black & white", 4600),
                 new OrderDTO(678, "Vegetable chopper", "kitchen", "blue", 999),
                 new OrderDTO(532, "Oven Gloves", "kitchen", "gray", 745)
