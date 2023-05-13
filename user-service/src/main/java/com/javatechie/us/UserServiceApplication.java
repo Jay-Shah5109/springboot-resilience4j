@@ -1,6 +1,7 @@
 package com.javatechie.us;
 
 import com.javatechie.us.dto.OrderDTO;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +40,11 @@ public class UserServiceApplication {
 
 
     @GetMapping("/displayOrders")
-  // @CircuitBreaker(name =USER_SERVICE,fallbackMethod = "getAllAvailableProducts")
-    @Retry(name = USER_SERVICE,fallbackMethod = "getAllAvailableProducts")
+   @CircuitBreaker(name =USER_SERVICE,fallbackMethod = "getAllAvailableProducts")
+//    @Retry(name = USER_SERVICE,fallbackMethod = "getAllAvailableProducts")
     public List<OrderDTO> displayOrders(@RequestParam("category") String category) {
         String url = category == null ? BASEURL : BASEURL + "/" + category;
-        log.info("retry method called {} times at {}", attempt, new Date());
+        log.info("retry method called {} times at {}", attempt++ , new Date());
         return restTemplate.getForObject(url, ArrayList.class);
     }
 
