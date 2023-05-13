@@ -20,15 +20,18 @@ public class CatalogServiceApplication {
     @Autowired
     private OrderRepository orderRepository;
 
+    private static final String ELECTRONICS = "electronics";
+    private static final String BLACK = "black";
+
     @PostConstruct
     public void initOrdersTable() {
         orderRepository.saveAll(Stream.of(
-                        new Order("mobile", "electronics", "white", 20000),
-                        new Order("T-Shirt", "clothes", "black", 999),
+                        new Order("mobile", ELECTRONICS , "white", 20000),
+                        new Order("T-Shirt", "clothes", BLACK, 999),
                         new Order("Jeans", "clothes", "blue", 1999),
-                        new Order("Laptop", "electronics", "gray", 50000),
-                        new Order("digital watch", "electronics", "black", 2500),
-                        new Order("Fan", "electronics", "black", 50000)
+                        new Order("Laptop", ELECTRONICS, "gray", 50000),
+                        new Order("digital watch", ELECTRONICS, BLACK, 2500),
+                        new Order("Fan", ELECTRONICS, BLACK , 50000)
                 ).
                 collect(Collectors.toList()));
     }
